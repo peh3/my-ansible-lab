@@ -1,5 +1,5 @@
 - name: Create a custom Index Page
   ansible.builtin.copy:
-    # We are using {{ website_text }} as a variable
-    content: "<h1>{{ website_text }}</h1>"
+    # We add the new environment variable here
+    content: "<h1>{{ website_text }}</h1> <h3>Environment: {{ target_env }}</h3>"
     dest: /var/www/html/index.html
