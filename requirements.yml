@@ -1,5 +1,11 @@
 ---
+# 1. Download the Security Role
 roles:
   - name: rhel9_cis
     src: https://github.com/ansible-lockdown/RHEL9-CIS.git
     version: main
+
+# 2. Download the Required Libraries (The Fix)
+collections:
+  - name: community.general
+  - name: ansible.posix
