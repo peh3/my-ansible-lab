@@ -10,6 +10,9 @@
     # Don't perform the changes yet, just tell me what IS wrong
     rhel9cis_audit_only: false  # Set to 'true' first to just test!
 
+    # DISABLE BOOTLOADER PASSWORD (Fixes the error)
+    rhel9cis_set_boot_pass: false
+
     # Do not disable SSH (Or you lose access!)
     rhel9cis_ssh_disable_root_login: false
     rhel9cis_sshd_permit_root_login: "yes" 
