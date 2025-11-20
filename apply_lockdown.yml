@@ -1,0 +1,24 @@
+---
+- name: Apply CIS Benchmarks (Hardening)
+  hosts: all
+  become: true
+  vars:
+    # ---------------------------------------
+    # SAFETY VARIABLES (DO NOT SKIP THESE)
+    # ---------------------------------------
+
+    # Don't perform the changes yet, just tell me what IS wrong
+    rhel9cis_audit_only: true  # Set to 'true' first to just test!
+
+    # Do not disable SSH (Or you lose access!)
+    rhel9cis_ssh_disable_root_login: false
+    rhel9cis_sshd_permit_root_login: "yes" 
+
+    # Keep your current partition layout (CIS wants separate /tmp, /var partitions)
+    rhel9cis_skip_filesystem_facts: true
+
+    # Don't break your K3s/AWX networking
+    rhel9cis_firewall_flush: false
+
+  roles:
+    - role: rhel9_cis

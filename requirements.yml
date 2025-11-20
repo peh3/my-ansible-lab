@@ -1,0 +1,5 @@
+---
+roles:
+  - name: rhel9_cis
+    src: https://github.com/ansible-lockdown/RHEL9-CIS.git
+    version: main
