@@ -8,7 +8,7 @@
     # ---------------------------------------
 
     # Don't perform the changes yet, just tell me what IS wrong
-    rhel9cis_audit_only: true  # Set to 'true' first to just test!
+    rhel9cis_audit_only: false  # Set to 'true' first to just test!
 
     # Do not disable SSH (Or you lose access!)
     rhel9cis_ssh_disable_root_login: false
