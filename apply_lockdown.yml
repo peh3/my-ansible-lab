@@ -20,6 +20,9 @@
     # Keep your current partition layout (CIS wants separate /tmp, /var partitions)
     rhel9cis_skip_filesystem_facts: true
 
+    # 3. *** THE NEW FIX *** (Give your profile a real name)
+    rhel9cis_authselect_custom_profile_name: "custom_security_profile"
+
     # Don't break your K3s/AWX networking
     rhel9cis_firewall_flush: false
 
