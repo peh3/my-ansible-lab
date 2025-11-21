@@ -8,7 +8,14 @@
     # ---------------------------------------
 
     # Don't perform the changes yet, just tell me what IS wrong
-    rhel9cis_audit_only: false  # Set to 'true' first to just test!
+    rhel9cis_audit_only: true #false  # Set to 'true' first to just test!
+    
+    # *** ADD THIS SECTION ***
+  pre_tasks:
+    - name: Force audit variable to boolean
+      ansible.builtin.set_fact:
+        rhel9cis_audit_only: "{{ rhel9cis_audit_only | bool }}"
+    # ************************
 
     # DISABLE BOOTLOADER PASSWORD (Fixes the error)
     rhel9cis_set_boot_pass: false
@@ -18,7 +25,7 @@
     rhel9cis_sshd_permit_root_login: "yes" 
 
     # Keep your current partition layout (CIS wants separate /tmp, /var partitions)
-    rhel9cis_skip_filesystem_facts: true
+    rhel9cis_skip_filesystem_facts: false #true
 
     # 3. *** THE NEW FIX *** (Give your profile a real name)
     rhel9cis_authselect_custom_profile_name: "custom_security_profile"
