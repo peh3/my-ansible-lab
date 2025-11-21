@@ -25,7 +25,14 @@
 
     # Don't break your K3s/AWX networking
     rhel9cis_firewall_flush: false
+    # --- REPORTING VARIABLES ---
+    # 1. Show a summary table in the AWX Console
+    rhel9cis_show_audit_summary: true
 
+    # 2. Save a detailed report on the laptop itself
+    rhel9cis_audit_format: json
+    rhel9cis_audit_report_file: "/tmp/cis_compliance_report.json"
+      
     # *** ADD THIS SECTION ***
   pre_tasks:
     - name: Force audit variable to boolean
