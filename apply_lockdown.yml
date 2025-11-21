@@ -32,6 +32,9 @@
       ansible.builtin.set_fact:
         rhel9cis_audit_only: "{{ rhel9cis_audit_only | bool }}"
     # ************************
+    - name: DEBUG - PRINT THE RUN MODE
+      ansible.builtin.debug:
+        msg: "The variable rhel9cis_audit_only is set to: {{ rhel9cis_audit_only }}. (True=Safe, False=Patching)"
 
   roles:
     - role: rhel9_cis
