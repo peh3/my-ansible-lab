@@ -22,10 +22,18 @@
     rhel9cis_show_audit_summary: true
 
     # Save the full JSON report on the laptop
-    rhel9cis_audit_format: json
-    rhel9cis_audit_report_file: "/tmp/cis_compliance_report.json"
+    #rhel9cis_audit_format: json
+    #rhel9cis_audit_report_file: "/tmp/cis_compliance_report.json"
     audit_conf_dir: /tmp
-
+    # CHANGE THIS FROM 'json' TO 'html'
+    rhel9cis_audit_format: html
+  
+    # Ensure the path ends in .html so you know what it is
+    rhel9cis_audit_report_file: "/tmp/cis_compliance_report.html"
+  
+    # Enable fetching so AWX saves it to the controller
+    rhel9cis_fetch_audit_files: true
+      
     # -------------------------------------------------------
     # 3. CRITICAL EXCEPTIONS (Don't break the Lab)
     # -------------------------------------------------------
@@ -47,8 +55,6 @@
 
     # NETWORKING: Don't flush rules that might kill K3s/AWX
     rhel9cis_firewall_flush: false
-
-    rhel9cis_fetch_audit_files: true
 
   # -------------------------------------------------------
   # 4. PRE-FLIGHT CHECKS (Fix Boolean Logic)
