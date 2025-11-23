@@ -2,14 +2,68 @@
 - name: Apply CIS Benchmarks (Hardening)
   hosts: all
   become: true
+
+  vars:
+    # -------------------------------------------------------
+    # 1. CORE MODE (Safety First)
+    # -------------------------------------------------------
+    # Default to Safe Mode (Audit Only).
+    # The pre_tasks below will ensure this is treated as a Boolean.
+    rhel9cis_audit_only: true
+
+    # -------------------------------------------------------
+    # 2. REPORTING & AUDIT ENGINE (To see results)
+    # -------------------------------------------------------
+    # Turn on the GOSS scanning tool (Required for reporting)
+    setup_audit: true
+    run_audit: true
+
+    # Show the score table in AWX logs at the end
+    rhel9cis_show_audit_summary: true
+
+    # Save the full JSON report on the laptop
+    rhel9cis_audit_format: json
+    rhel9cis_audit_report_file: "/tmp/cis_compliance_report.json"
+    audit_conf_dir: /tmp
+
+    # -------------------------------------------------------
+    # 3. CRITICAL EXCEPTIONS (Don't break the Lab)
+    # -------------------------------------------------------
+    # *** SAVE APACHE ***: Disable the rule that removes HTTPD
+    rhel9cis_rule_2_1_18: false
+
+    # BOOTLOADER: Skip password requirement (fixes 'changethispassword' error)
+    rhel9cis_set_boot_pass: false
+
+    # FILESYSTEM: Don't fail if partitions like /var/tmp aren't separate
+    rhel9cis_skip_filesystem_facts: true
+
+    # ACCESS: Don't lock us out of SSH
+    rhel9cis_ssh_disable_root_login: false
+    rhel9cis_sshd_permit_root_login: "yes"
+
+    # AUTHSELECT: Give the profile a name to pass the check
+    rhel9cis_authselect_custom_profile_name: "custom_security_profile"
+
+    # NETWORKING: Don't flush rules that might kill K3s/AWX
+    rhel9cis_firewall_flush: false
+
+
+  # -------------------------------------------------------
+  # 4. PRE-FLIGHT CHECKS (Fix Boolean Logic)
+  # -------------------------------------------------------
+  pre_tasks:
+    - name: Force audit variable to boolean (Fixes AWX Survey String Issue)
+      ansible.builtin.set_fact:
+        rhel9cis_audit_only: "{{ rhel9cis_audit_only | bool }}"
+
+    - name: DEBUG - VERIFY RUN MODE
+      ansible.builtin.debug:
+        msg: "FINAL MODE: rhel9cis_audit_only is {{ rhel9cis_audit_only }} (True=Safe, False=Patching)"
+
+
+  # -------------------------------------------------------
+  # 5. THE SECURITY ROLE
+  # -------------------------------------------------------
   roles:
     - role: rhel9_cis
-      vars:
-        rhel9cis_level: 2
-        rhel9cis_allow_reboot: false
-        rhel9cis_audit_only: true 
-        rhel9cis_set_boot_pass: false
-        setup_audit: true
-        run_audit: true
-        audit_format: json
-        audit_conf_dir: /tmp
