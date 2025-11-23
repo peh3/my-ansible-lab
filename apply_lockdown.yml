@@ -2,46 +2,14 @@
 - name: Apply CIS Benchmarks (Hardening)
   hosts: all
   become: true
-  vars:
-    # ---------------------------------------
-    # SAFETY VARIABLES (DO NOT SKIP THESE)
-    # ---------------------------------------
-
-    # Don't perform the changes yet, just tell me what IS wrong
-    rhel9cis_audit_only: true #false  # Set to 'true' first to just test!
-    
-    # DISABLE BOOTLOADER PASSWORD (Fixes the error)
-    rhel9cis_set_boot_pass: false
-
-    # Do not disable SSH (Or you lose access!)
-    rhel9cis_ssh_disable_root_login: false
-    rhel9cis_sshd_permit_root_login: "yes" 
-
-    # Keep your current partition layout (CIS wants separate /tmp, /var partitions)
-    rhel9cis_skip_filesystem_facts: false #true
-
-    # 3. *** THE NEW FIX *** (Give your profile a real name)
-    rhel9cis_authselect_custom_profile_name: "custom_security_profile"
-
-    # Don't break your K3s/AWX networking
-    rhel9cis_firewall_flush: false
-    # --- REPORTING VARIABLES ---
-    # 1. Show a summary table in the AWX Console
-    rhel9cis_show_audit_summary: true
-
-    # 2. Save a detailed report on the laptop itself
-    rhel9cis_audit_format: json
-    rhel9cis_audit_report_file: "/tmp/cis_compliance_report.json"
-      
-    # *** ADD THIS SECTION ***
-  pre_tasks:
-    - name: Force audit variable to boolean
-      ansible.builtin.set_fact:
-        rhel9cis_audit_only: "{{ rhel9cis_audit_only | bool }}"
-    # ************************
-    - name: DEBUG - PRINT THE RUN MODE
-      ansible.builtin.debug:
-        msg: "The variable rhel9cis_audit_only is set to: {{ rhel9cis_audit_only }}. (True=Safe, False=Patching)"
-
   roles:
     - role: rhel9_cis
+      vars:
+        rhel9cis_level: 2
+        rhel9cis_allow_reboot: false
+        rhel9cis_audit_only: true 
+        rhel9cis_set_boot_pass: false
+        setup_audit: true
+        run_audit: true
+        audit_format: json
+        audit_conf_dir: /tmp
