@@ -48,6 +48,7 @@
     # NETWORKING: Don't flush rules that might kill K3s/AWX
     rhel9cis_firewall_flush: false
 
+    rhel9cis_fetch_audit_files: true
 
   # -------------------------------------------------------
   # 4. PRE-FLIGHT CHECKS (Fix Boolean Logic)
