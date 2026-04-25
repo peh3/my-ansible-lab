@@ -10,7 +10,8 @@
     - name: Fetch file from Host 1
       ansible.builtin.fetch:
         #src: /var/log/app_export.csv    
-        src: /home/peh/my-ansible-lab/filesA/my_custom_config.conf
+        #src: /home/peh/my-ansible-lab/filesA/my_custom_config.conf
+        src: "{{ source_file }}"        # <--- Variable for the input path
         dest: /tmp/transfer_cache/      
         flat: true                      
       delegate_to: rhel-node-01         # <--- MUST MATCH AWX HOST NAME EXACTLY
@@ -21,8 +22,11 @@
     # ---------------------------------------------------------
     - name: Copy the fetched file to Host 2
       ansible.builtin.copy:
-        src: /tmp/transfer_cache/my_custom_config.conf
-        dest: /home/peh/my-ansible-lab/filesB/my_custom_config.conf
+        #src: /tmp/transfer_cache/my_custom_config.conf
+        #dest: /home/peh/my-ansible-lab/filesB/my_custom_config.conf
+        # We use 'basename' to grab just the filename, stripping away the original folder path
+        src: "/tmp/transfer_cache/{{ source_file | basename }}"  
+        dest: "{{ destination_file }}"  # <--- Variable for the output path
         owner: root
         group: root
         mode: '0644'
