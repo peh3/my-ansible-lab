@@ -1,7 +1,7 @@
 ---
 - name: Transfer File from Host 1 to Host 2
   hosts: localhost  
-  become: true
+  become: false
   
   tasks:
     # ---------------------------------------------------------
