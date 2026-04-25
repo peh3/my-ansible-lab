@@ -27,8 +27,8 @@
         # We use 'basename' to grab just the filename, stripping away the original folder path
         src: "/tmp/transfer_cache/{{ source_file | basename }}"  
         dest: "{{ destination_file }}"  # <--- Variable for the output path
-        owner: root
-        group: root
+          #owner: root
+          #group: root
         mode: '0644'
       delegate_to: rhel-node-02         # <--- MUST MATCH AWX HOST NAME EXACTLY
       become: true
