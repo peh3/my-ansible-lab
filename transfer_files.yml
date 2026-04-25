@@ -17,13 +17,13 @@
       # Ignore errors if the source file doesn't exist yet in your lab
       ignore_errors: true 
 
-    # ---------------------------------------------------------
+        # ---------------------------------------------------------
     # SCENARIO 2: Download a file from the Internet to the Target Host
     # ---------------------------------------------------------
     - name: Download a file directly from a URL to the remote host
       ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
-        dest: /tmp/ansible_example.cfg    # Where to save it on the RHEL node
-        owner: student                    # Set ownership to your user
+        url: https://raw.githubusercontent.com/ansible/ansible/main/README.md
+        dest: /tmp/ansible_readme.md    # Updated destination file name
+        owner: student
         group: wheel
         mode: '0644'
