@@ -1,7 +1,7 @@
 ---
 - name: Transfer File from Host 1 to Host 2
   hosts: localhost  
-  become: false
+  become: true
   
   tasks:
     # ---------------------------------------------------------
@@ -14,7 +14,6 @@
         dest: /tmp/transfer_cache/      
         flat: true                      
       delegate_to: rhel-node-01         # <--- MUST MATCH AWX HOST NAME EXACTLY
-      become: true
 
     # ---------------------------------------------------------
     # STEP 2: Push to Host 2
@@ -27,4 +26,3 @@
         group: root
         mode: '0644'
       delegate_to: rhel-node-02         # <--- MUST MATCH AWX HOST NAME EXACTLY
-      become: true
