@@ -1,0 +1,29 @@
+---
+- name: Transfer and Download Files to Target Host
+  hosts: all
+  become: true # Required if writing to protected directories like /etc
+  
+  tasks:
+    # ---------------------------------------------------------
+    # SCENARIO 1: Copy a file from AWX to the Target Host
+    # ---------------------------------------------------------
+    - name: Copy a local config file to the remote host
+      ansible.builtin.copy:
+        src: files/my_custom_config.conf  # Path inside your Git repository
+        dest: /etc/my_custom_config.conf  # Destination on the RHEL node
+        owner: root
+        group: root
+        mode: '0644'
+      # Ignore errors if the source file doesn't exist yet in your lab
+      ignore_errors: true 
+
+    # ---------------------------------------------------------
+    # SCENARIO 2: Download a file from the Internet to the Target Host
+    # ---------------------------------------------------------
+    - name: Download a file directly from a URL to the remote host
+      ansible.builtin.get_url:
+        url: https://raw.githubusercontent.com/ansible/ansible/devel/examples/ansible.cfg
+        dest: /tmp/ansible_example.cfg    # Where to save it on the RHEL node
+        owner: student                    # Set ownership to your user
+        group: wheel
+        mode: '0644'
