@@ -1,29 +1,27 @@
 ---
-- name: Transfer and Download Files to Target Host
-  hosts: all
-  become: true # Required if writing to protected directories like /etc
+- name: Transfer File from Host 1 to Host 2
+  hosts: localhost  
+  become: true
   
   tasks:
     # ---------------------------------------------------------
-    # SCENARIO 1: Copy a file from AWX to the Target Host
+    # STEP 1: Pull from Host 1
     # ---------------------------------------------------------
-    - name: Copy a local config file to the remote host
+    - name: Fetch file from Host 1
+      ansible.builtin.fetch:
+        src: /var/log/app_export.csv    
+        dest: /tmp/transfer_cache/      
+        flat: true                      
+      delegate_to: rhel-node-01         # <--- MUST MATCH AWX HOST NAME EXACTLY
+
+    # ---------------------------------------------------------
+    # STEP 2: Push to Host 2
+    # ---------------------------------------------------------
+    - name: Copy the fetched file to Host 2
       ansible.builtin.copy:
-        src: files/my_custom_config.conf  # Path inside your Git repository
-        dest: /etc/my_custom_config.conf  # Destination on the RHEL node
+        src: /tmp/transfer_cache/app_export.csv  
+        dest: /opt/data/app_export.csv           
         owner: root
         group: root
         mode: '0644'
-      # Ignore errors if the source file doesn't exist yet in your lab
-      ignore_errors: true 
-
-        # ---------------------------------------------------------
-    # SCENARIO 2: Download a file from the Internet to the Target Host
-    # ---------------------------------------------------------
-    - name: Download a file directly from a URL to the remote host
-      ansible.builtin.get_url:
-        url: https://raw.githubusercontent.com/ansible/ansible/main/README.md
-        dest: /tmp/ansible_readme.md    # Updated destination file name
-        owner: student
-        group: wheel
-        mode: '0644'
+      delegate_to: rhel-node-02         # <--- MUST MATCH AWX HOST NAME EXACTLY
