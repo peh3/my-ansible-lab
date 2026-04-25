@@ -1,34 +1,40 @@
 ---
-- name: Transfer File from Host 1 to Host 2
+- name: Transfer Dynamic File from Host 1 to Host 2 (Retain Permissions)
   hosts: localhost  
-  become: false
+  gather_facts: false     
   
   tasks:
     # ---------------------------------------------------------
-    # STEP 1: Pull from Host 1
+    # STEP 1: Capture the original file's metadata from Host 1
+    # ---------------------------------------------------------
+    - name: Get original file metadata from Host 1
+      ansible.builtin.stat:
+        path: "{{ source_file }}"
+      delegate_to: rhel-node-01
+      become: true
+      register: original_file_info    # <--- Saves the metadata to this variable
+
+    # ---------------------------------------------------------
+    # STEP 2: Pull the file from Host 1
     # ---------------------------------------------------------
     - name: Fetch file from Host 1
       ansible.builtin.fetch:
-        #src: /var/log/app_export.csv    
-        #src: /home/peh/my-ansible-lab/filesA/my_custom_config.conf
-        src: "{{ source_file }}"        # <--- Variable for the input path
+        src: "{{ source_file }}"        
         dest: /tmp/transfer_cache/      
         flat: true                      
-      delegate_to: rhel-node-01         # <--- MUST MATCH AWX HOST NAME EXACTLY
-      become: true
+      delegate_to: rhel-node-01
+      become: true        
 
     # ---------------------------------------------------------
-    # STEP 2: Push to Host 2
+    # STEP 3: Push to Host 2 and apply original ownership
     # ---------------------------------------------------------
     - name: Copy the fetched file to Host 2
       ansible.builtin.copy:
-        #src: /tmp/transfer_cache/my_custom_config.conf
-        #dest: /home/peh/my-ansible-lab/filesB/my_custom_config.conf
-        # We use 'basename' to grab just the filename, stripping away the original folder path
         src: "/tmp/transfer_cache/{{ source_file | basename }}"  
-        dest: "{{ destination_file }}"  # <--- Variable for the output path
-          #owner: root
-          #group: root
-        mode: '0644'
-      delegate_to: rhel-node-02         # <--- MUST MATCH AWX HOST NAME EXACTLY
+        dest: "{{ destination_file }}"  
+        # Injecting the metadata we captured in Step 1:
+        owner: "{{ original_file_info.stat.pw_name }}"  # pw_name = Owner Name
+        group: "{{ original_file_info.stat.gr_name }}"  # gr_name = Group Name
+        mode:  "{{ original_file_info.stat.mode }}"     # Retains original rwx permissions
+      delegate_to: rhel-node-02
       become: true
